@@ -1,0 +1,77 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class HiveMind : MonoBehaviour
+{
+
+    public float honeyProductionRate = 10f;
+    public int startingNumberOfBees = 3;
+    public GameObject beePrefab;
+
+    private int nectar = 0;
+    private int honey = 0;
+    private float timer = 0.0f;
+    private bool isCountingDown = false;
+
+    void Start()
+    {
+        // buzz buzz bees
+        for (int i = 0; i < startingNumberOfBees; i++)
+        {
+            GameObject beeObject = Instantiate(beePrefab, transform.position, Quaternion.identity);
+            Bee bee = beeObject.GetComponent<Bee>();
+            if (bee != null)
+            {
+                bee.Init(this);
+            }
+        }
+    }
+
+    void Update()
+    {
+        if (nectar > 0 && !isCountingDown)
+        {
+            isCountingDown = true;
+            timer = honeyProductionRate;
+        }
+
+        if (isCountingDown)
+        {
+            timer -= Time.deltaTime;
+            if (timer <= 0)
+            {
+                ProduceHoney();
+            }
+        }
+    }
+
+    void ProduceHoney()
+    {
+        if (nectar > 0)
+        {
+            nectar--;
+            honey++;
+
+            if (nectar > 0)
+            {
+                timer = honeyProductionRate;
+            }
+            else
+            {
+                isCountingDown = false;
+            }
+        }
+    }
+
+    public void GiveNectar()
+    {
+        nectar++;
+        if (!isCountingDown)
+        {
+            isCountingDown = true;
+            timer = honeyProductionRate;
+        }
+    }
+
+}
